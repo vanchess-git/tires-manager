@@ -1,6 +1,18 @@
 import {BarChart} from "@mui/x-charts/BarChart";
 import React from "react";
-import {Box, Card, Container, FormControl, InputLabel, Select, Stack, TextField, Typography} from "@mui/material";
+import {
+  Box,
+  Button,
+  Card,
+  Container,
+  FormControl,
+  Grid,
+  InputLabel, MenuItem,
+  Select,
+  Stack,
+  TextField,
+  Typography
+} from "@mui/material";
 
 function BattleCalculator() {
 
@@ -15,6 +27,34 @@ function BattleCalculator() {
     'mech',
     'infantry',
     'pds',
+  ]
+
+  const factionNames = [
+    'Arborec',
+    'Barony of Letnev',
+    'Clan of Saar',
+    'Embers of Muaat',
+    'Emirates of Hacan',
+    'Federation of Sol',
+    'Ghosts of Creuss',
+    'L1Z1X Mindnet',
+    'Mentak Coalition',
+    'Naalu Collective',
+    'Nekro Virus',
+    `Sardakk N'orr`,
+    'Universities of Jol-Nar',
+    'Winnu',
+    'Xxcha Kingdom',
+    'Yin Brotherhood',
+    'Yssaril Tribes',
+    'Argent Flight',
+    'Empyrean',
+    'Mahact Gene-Sorcerers',
+    'Naaz-Rokha Alliance',
+    'Nomad',
+    'Titans of Ul',
+    `Vuil'Raith Cabal`,
+    'Council Keleres',
   ]
 
   return (
@@ -33,46 +73,66 @@ function BattleCalculator() {
           spacing={2}
         >
           <Typography>hi</Typography>
-          <Stack direction="row" spacing={2}>
-            <Stack
+          <Grid container spacing={2}>
+            <Grid item xs={2}
               spacing={2}
             >
-              <FormControl fullWidth>
-              <InputLabel id="demo-simple-select-label">Age</InputLabel>
-              <Select
-                labelId="demo-simple-select-label"
-                label="faction"
-              ></Select>
-              </FormControl>
-              <FormControl fullWidth>
-                <InputLabel id="demo-simple-select-label">Age</InputLabel>
-                <Select
-                  labelId="demo-simple-select-label"
-                  label="faction"
-                ></Select>
-              </FormControl>
-            </Stack>
-            {plasticUnits.map(ship =>
-              <Stack
+              <Stack spacing={2}>
+                <FormControl fullWidth>
+                  <InputLabel id="1st-player-faction">Faction</InputLabel>
+                  <Select
+                      labelId="1st-player-faction"
+                      label="faction"
+                  >
+                    {factionNames.map((faction, index) =>
+                        <MenuItem value={faction}>{faction}</MenuItem>
+                    )}
+                  </Select>
+                </FormControl>
+                <FormControl fullWidth>
+                  <InputLabel id="2nd-player-faction">Faction</InputLabel>
+                  <Select
+                      labelId="2nd-player-faction"
+                      label="faction"
+                  >
+                    {factionNames.map((faction, index) =>
+                        <MenuItem value={faction}>{faction}</MenuItem>
+                    )}
+                  </Select>
+                </FormControl>
+              </Stack>
+            </Grid>
+            {plasticUnits.map((ship, index) =>
+              <Grid item xs={2}
                 spacing={2}
               >
-                <TextField
-                  label={ship}
-                  InputProps={{
-                    readOnly: true,
-                  }}
-                  defaultValue={0}
-                />
-                <TextField
-                  label={ship}
-                  InputProps={{
-                    readOnly: true,
-                  }}
-                  defaultValue={0}
-                />
-              </Stack>
+                <Stack spacing={2}>
+                  <Stack direction="row" spacing={1}>
+                    <Button variant="contained" size="small">-</Button>
+                    <Button variant="contained" size="small">+</Button>
+                  </Stack>
+                  <TextField
+                      label={ship}
+                      InputProps={{
+                        readOnly: true,
+                      }}
+                      defaultValue={0}
+                  />
+                  <TextField
+                      label={ship}
+                      InputProps={{
+                        readOnly: true,
+                      }}
+                      defaultValue={0}
+                  />
+                  <Stack direction="row" spacing={1}>
+                    <Button variant="contained" size="small">-</Button>
+                    <Button variant="contained" size="small">+</Button>
+                  </Stack>
+                </Stack>
+              </Grid>
             )}
-          </Stack>
+          </Grid>
         </Stack>
       </Card>
     </Container>
