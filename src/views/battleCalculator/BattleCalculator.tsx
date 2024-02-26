@@ -1,7 +1,6 @@
 import {BarChart} from "@mui/x-charts/BarChart";
-import React from "react";
+import React, {useState} from "react";
 import {
-  Box,
   Button,
   Card,
   Container,
@@ -13,9 +12,22 @@ import {
   TextField,
   Typography
 } from "@mui/material";
+import {PlasticUnit} from "../../data/interfaces/PlasticUnit";
 
 function BattleCalculator() {
 
+  let [alliedFaction, setAlliedFaction] = useState<string>("faction_arborec");
+  let [hostileFaction, setHostileFaction] = useState<string>("faction_arborec");
+  let [alliedUnits, setAlliedUnits] = useState<PlasticUnit[]>(
+    [
+
+    ]
+  );
+  let [hostileUnits, setHostileUnits] = useState<PlasticUnit[]>(
+    [
+
+    ]
+  );
   const plasticUnits = [
     'flagship',
     'warsun',

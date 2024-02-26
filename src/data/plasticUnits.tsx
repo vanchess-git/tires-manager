@@ -1,30 +1,13 @@
+import {PlasticUnit} from "./interfaces/PlasticUnit";
 
-interface PlasticUnit {
-  id: string;
-  class: string[];
-  type: string;
-  factions: string[];
-  name: {
-    normal: string;
-    upgrade: string;
-  }
-  combat: {
-    normal: {
-      strength: number;
-      noOfRolls: number;
-    }
-    upgrade: {
-      strength: number;
-      noOfRolls: number;
-    }
-  };
-}
+
 const plasticUnits: PlasticUnit[] = [
   {
     id: "war_sun_general",
     class: ["ship"],
     type: "war_sun",
     factions: [
+      "faction_general",
       "faction_arborec",
       "faction_barony_of_letnev",
       "faction_clan_of_saar",
@@ -91,6 +74,7 @@ const plasticUnits: PlasticUnit[] = [
     class: ["ship"],
     type: "cruiser",
     factions: [
+      "faction_general",
       "faction_arborec",
       "faction_barony_of_letnev",
       "faction_clan_of_saar",
@@ -156,6 +140,7 @@ const plasticUnits: PlasticUnit[] = [
     class: ["ship"],
     type: "dreadnought",
     factions: [
+      "faction_general",
       "faction_arborec",
       "faction_barony_of_letnev",
       "faction_clan_of_saar",
@@ -240,6 +225,7 @@ const plasticUnits: PlasticUnit[] = [
     class: ["ship"],
     type: "destroyer",
     factions: [
+      "faction_general",
       "faction_arborec",
       "faction_barony_of_letnev",
       "faction_clan_of_saar",
@@ -305,6 +291,7 @@ const plasticUnits: PlasticUnit[] = [
     class: ["structure"],
     type: "pds",
     factions: [
+      "faction_general",
       "faction_arborec",
       "faction_barony_of_letnev",
       "faction_clan_of_saar",
@@ -373,6 +360,7 @@ const plasticUnits: PlasticUnit[] = [
     class: ["ship"],
     type: "carrier",
     factions: [
+      "faction_general",
       "faction_arborec",
       "faction_barony_of_letnev",
       "faction_clan_of_saar",
@@ -438,6 +426,7 @@ const plasticUnits: PlasticUnit[] = [
     class: ["ship"],
     type: "fighter",
     factions: [
+      "faction_general",
       "faction_arborec",
       "faction_barony_of_letnev",
       "faction_clan_of_saar",
@@ -503,6 +492,7 @@ const plasticUnits: PlasticUnit[] = [
     class: ["ground_force"],
     type: "infantry",
     factions: [
+      "faction_general",
       "faction_barony_of_letnev",
       "faction_clan_of_saar",
       "faction_embers_of_muaat",
@@ -606,6 +596,7 @@ const plasticUnits: PlasticUnit[] = [
     class: ["structure"],
     type: "space_dock",
     factions: [
+      "faction_general",
       "faction_arborec",
       "faction_barony_of_letnev",
       "faction_embers_of_muaat",
