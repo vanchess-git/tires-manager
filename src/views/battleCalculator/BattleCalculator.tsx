@@ -19,11 +19,7 @@ function BattleCalculator() {
 
   let [alliedFaction, setAlliedFaction] = useState<string>("faction_arborec");
   let [hostileFaction, setHostileFaction] = useState<string>("faction_arborec");
-  let [alliedUnits, setAlliedUnits] = useState<PlasticUnit[]>(
-    [
-
-    ]
-  );
+  let [alliedUnits, setAlliedUnits] = useState<PlasticUnit[]>([]);
   let [hostileUnits, setHostileUnits] = useState<PlasticUnit[]>([]);
 
   useEffect(() => {
@@ -34,10 +30,25 @@ function BattleCalculator() {
               !Array.isArray(item) &&
               "factions" in item &&
               Array.isArray(item.factions) &&
-              item.factions.includes("arborec")
+              item.factions.includes("faction_arborec")
       )
     })
+    console.log("th LOG", allyArray)
     setAlliedUnits(allyArray);
+
+    let hostileArray: PlasticUnit[] = plasticUnits.filter((item): item is PlasticUnit => {
+      return (
+        typeof item === "object" &&
+        item !== null &&
+        !Array.isArray(item) &&
+        "factions" in item &&
+        Array.isArray(item.factions) &&
+        item.factions.includes("faction_federation_of_sol")
+      )
+    })
+    console.log("th LOG", hostileArray)
+    setHostileUnits(hostileArray);
+
   }, [])
 
   const plasticUnitsOld = [
@@ -126,7 +137,7 @@ function BattleCalculator() {
                 </FormControl>
               </Stack>
             </Grid>
-            {plasticUnits.map((ship, index) =>
+            {alliedUnits.map((allyUnit, index) =>
               <Grid item xs={2}
                 spacing={2}
               >
@@ -136,14 +147,14 @@ function BattleCalculator() {
                     <Button variant="contained" size="small">+</Button>
                   </Stack>
                   <TextField
-                      label={ship ? ship.name.normal : "name"}
+                      label={allyUnit ? allyUnit.name.normal : "name"}
                       InputProps={{
                         readOnly: true,
                       }}
                       defaultValue={0}
                   />
                   <TextField
-                      label={ship ? ship.name.normal : "name"}
+                      label={hostileUnits[index] ? hostileUnits[index].name.normal : "name"}
                       InputProps={{
                         readOnly: true,
                       }}
