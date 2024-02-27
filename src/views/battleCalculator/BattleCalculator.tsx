@@ -1,5 +1,5 @@
 import {BarChart} from "@mui/x-charts/BarChart";
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {
   Button,
   Card,
@@ -13,6 +13,7 @@ import {
   Typography
 } from "@mui/material";
 import {PlasticUnit} from "../../data/interfaces/PlasticUnit";
+import {plasticUnits} from "../../data/plasticUnits";
 
 function BattleCalculator() {
 
@@ -23,12 +24,23 @@ function BattleCalculator() {
 
     ]
   );
-  let [hostileUnits, setHostileUnits] = useState<PlasticUnit[]>(
-    [
+  let [hostileUnits, setHostileUnits] = useState<PlasticUnit[]>([]);
 
-    ]
-  );
-  const plasticUnits = [
+  useEffect(() => {
+    let allyArray: PlasticUnit[] = plasticUnits.filter((item): item is PlasticUnit => {
+      return (
+          typeof item === "object" &&
+              item !== null &&
+              !Array.isArray(item) &&
+              "factions" in item &&
+              Array.isArray(item.factions) &&
+              item.factions.includes("arborec")
+      )
+    })
+    setAlliedUnits(allyArray);
+  }, [])
+
+  const plasticUnitsOld = [
     'flagship',
     'warsun',
     'dreadnought',
@@ -124,14 +136,14 @@ function BattleCalculator() {
                     <Button variant="contained" size="small">+</Button>
                   </Stack>
                   <TextField
-                      label={ship}
+                      label={ship ? ship.name.normal : "name"}
                       InputProps={{
                         readOnly: true,
                       }}
                       defaultValue={0}
                   />
                   <TextField
-                      label={ship}
+                      label={ship ? ship.name.normal : "name"}
                       InputProps={{
                         readOnly: true,
                       }}

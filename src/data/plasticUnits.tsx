@@ -11,7 +11,6 @@ const plasticUnits: PlasticUnit[] = [
       "faction_arborec",
       "faction_barony_of_letnev",
       "faction_clan_of_saar",
-      "faction_embers_of_muaat",
       "faction_emirates_of_hacan",
       "faction_federation_of_sol",
       "faction_ghosts_of_creuss",
