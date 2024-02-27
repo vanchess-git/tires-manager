@@ -14,11 +14,20 @@ import {
 } from "@mui/material";
 import {PlasticUnit} from "../../data/interfaces/PlasticUnit";
 import {plasticUnits} from "../../data/plasticUnits";
+import {PlasticFaction} from "../../data/interfaces/PlasticFaction";
+import {plasticFactions} from "../../data/plasticFactions";
 
 function BattleCalculator() {
 
-  let [alliedFaction, setAlliedFaction] = useState<string>("faction_arborec");
-  let [hostileFaction, setHostileFaction] = useState<string>("faction_arborec");
+  let [alliedFaction, setAlliedFaction] = useState<PlasticFaction>(
+    {
+      id: "faction_arborec",
+      name: "Arborec"
+    });
+  let [hostileFaction, setHostileFaction] = useState<PlasticFaction>({
+    id: "faction_federation_of_sol",
+    name: "Federation of Sol"
+  });
   let [alliedUnits, setAlliedUnits] = useState<PlasticUnit[]>([]);
   let [hostileUnits, setHostileUnits] = useState<PlasticUnit[]>([]);
 
@@ -30,7 +39,7 @@ function BattleCalculator() {
               !Array.isArray(item) &&
               "factions" in item &&
               Array.isArray(item.factions) &&
-              item.factions.includes("faction_arborec")
+              item.factions.includes(alliedFaction.id)
       )
     })
     console.log("th LOG", allyArray)
@@ -43,26 +52,13 @@ function BattleCalculator() {
         !Array.isArray(item) &&
         "factions" in item &&
         Array.isArray(item.factions) &&
-        item.factions.includes("faction_federation_of_sol")
+        item.factions.includes(hostileFaction.id)
       )
     })
     console.log("th LOG", hostileArray)
     setHostileUnits(hostileArray);
 
   }, [])
-
-  const plasticUnitsOld = [
-    'flagship',
-    'warsun',
-    'dreadnought',
-    'carrier',
-    'cruiser',
-    'destroyer',
-    'fighter',
-    'mech',
-    'infantry',
-    'pds',
-  ]
 
   const factionNames = [
     'Arborec',
@@ -114,24 +110,26 @@ function BattleCalculator() {
             >
               <Stack spacing={2}>
                 <FormControl fullWidth>
-                  <InputLabel id="1st-player-faction">Faction</InputLabel>
+                  <InputLabel id="1st-player-faction">Ally Faction</InputLabel>
                   <Select
                       labelId="1st-player-faction"
                       label="faction"
+                      defaultValue={alliedFaction.id}
                   >
-                    {factionNames.map((faction, index) =>
-                        <MenuItem value={faction}>{faction}</MenuItem>
+                    {plasticFactions.map((faction, index) =>
+                        <MenuItem value={faction.id}>{faction.name}</MenuItem>
                     )}
                   </Select>
                 </FormControl>
                 <FormControl fullWidth>
-                  <InputLabel id="2nd-player-faction">Faction</InputLabel>
+                  <InputLabel id="2nd-player-faction">Hostile Faction</InputLabel>
                   <Select
                       labelId="2nd-player-faction"
                       label="faction"
+                      defaultValue={hostileFaction.id}
                   >
-                    {factionNames.map((faction, index) =>
-                        <MenuItem value={faction}>{faction}</MenuItem>
+                    {plasticFactions.map((faction, index) =>
+                        <MenuItem value={faction.id}>{faction.name}</MenuItem>
                     )}
                   </Select>
                 </FormControl>

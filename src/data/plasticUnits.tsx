@@ -7,7 +7,6 @@ const plasticUnits: PlasticUnit[] = [
     class: ["ship"],
     type: "war_sun",
     factions: [
-      "faction_general",
       "faction_arborec",
       "faction_barony_of_letnev",
       "faction_clan_of_saar",
