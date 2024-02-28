@@ -17,6 +17,9 @@ import {plasticUnits} from "../../data/plasticUnits";
 import {PlasticFaction} from "../../data/interfaces/PlasticFaction";
 import {plasticFactions} from "../../data/plasticFactions";
 
+interface Interface {
+  
+}
 function BattleCalculator() {
 
   let [alliedFaction, setAlliedFaction] = useState<PlasticFaction>(
