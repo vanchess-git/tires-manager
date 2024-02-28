@@ -129,6 +129,7 @@ function BattleCalculator() {
         unitCount: 0,
       },
     ])
+
   useEffect(() => {
     let allyArray: PlasticUnit[] = plasticUnits.filter((item): item is PlasticUnit => {
       return (
@@ -171,6 +172,50 @@ function BattleCalculator() {
       setHostileFaction(newHostileFaction);
     }
   };
+
+  const increaseAllyCount = (allyUnit: PlasticUnit, index: number) => {
+    const nextAllyCount: PlasticUnitCounts[] = alliedUnitCounts.map((c, i) => {
+      if (c.unitType === allyUnit.type) {
+        return {
+          unitType: c.unitType,
+          unitCount: c.unitCount + 1
+        };
+      } else {
+        return {
+          unitType: c.unitType,
+          unitCount: c.unitCount
+        };
+      }
+    });
+    console.log(nextAllyCount)
+    setAlliedUnitCounts(nextAllyCount);
+  }
+
+  const decreaseAllyCount = (allyUnit: PlasticUnit, index: number) => {
+    const nextAllyCount: PlasticUnitCounts[] = alliedUnitCounts.map((c, i) => {
+      if (c.unitType === allyUnit.type) {
+        return {
+          unitType: c.unitType,
+          unitCount: c.unitCount - 1
+        };
+      } else {
+        return {
+          unitType: c.unitType,
+          unitCount: c.unitCount
+        };
+      }
+    });
+    console.log(nextAllyCount)
+    setAlliedUnitCounts(nextAllyCount);
+  }
+
+  const increaseHostileCount = () => {
+
+  }
+
+  const decreaseHostileCount = () => {
+
+  }
 
   return (
     <Container>
@@ -229,8 +274,12 @@ function BattleCalculator() {
               >
                 <Stack spacing={2}>
                   <Stack direction="row" spacing={1}>
-                    <Button variant="contained" size="small">-</Button>
-                    <Button variant="contained" size="small">+</Button>
+                    <Button variant="contained" size="small" onClick={() => {
+                      decreaseAllyCount(allyUnit, index)
+                    }}>-</Button>
+                    <Button variant="contained" size="small" onClick={() => {
+                      increaseAllyCount(allyUnit, index)
+                    }}>+</Button>
                   </Stack>
                   <TextField
                       label={allyUnit ? allyUnit.name.normal : "name"}
@@ -242,6 +291,9 @@ function BattleCalculator() {
                       allyUnit.type === item.unitType
                     )?.unitCount
                   }
+                      value={alliedUnitCounts.find((item) =>
+                        allyUnit.type === item.unitType
+                      )?.unitCount}
                   />
                   <TextField
                       label={hostileUnits[index] ? hostileUnits[index].name.normal : "name"}
@@ -253,10 +305,18 @@ function BattleCalculator() {
                           hostileUnits[index]?.type === item.unitType
                         )?.unitCount
                       }
+                      value={hostileUnitCounts.find((item) =>
+                        hostileUnits[index]?.type === item.unitType
+                      )?.unitCount
+                  }
                   />
                   <Stack direction="row" spacing={1}>
-                    <Button variant="contained" size="small">-</Button>
-                    <Button variant="contained" size="small">+</Button>
+                    <Button variant="contained" size="small" onClick={() => {
+                      decreaseHostileCount()
+                    }}>-</Button>
+                    <Button variant="contained" size="small" onClick={() => {
+                      increaseHostileCount()
+                    }}>+</Button>
                   </Stack>
                 </Stack>
               </Grid>
