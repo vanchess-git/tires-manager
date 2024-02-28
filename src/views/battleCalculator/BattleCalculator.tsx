@@ -7,7 +7,7 @@ import {
   FormControl,
   Grid,
   InputLabel, MenuItem,
-  Select,
+  Select, SelectChangeEvent,
   Stack,
   TextField,
   Typography
@@ -58,35 +58,21 @@ function BattleCalculator() {
     console.log("th LOG", hostileArray)
     setHostileUnits(hostileArray);
 
-  }, [])
+  }, [alliedFaction, hostileFaction])
 
-  const factionNames = [
-    'Arborec',
-    'Barony of Letnev',
-    'Clan of Saar',
-    'Embers of Muaat',
-    'Emirates of Hacan',
-    'Federation of Sol',
-    'Ghosts of Creuss',
-    'L1Z1X Mindnet',
-    'Mentak Coalition',
-    'Naalu Collective',
-    'Nekro Virus',
-    `Sardakk N'orr`,
-    'Universities of Jol-Nar',
-    'Winnu',
-    'Xxcha Kingdom',
-    'Yin Brotherhood',
-    'Yssaril Tribes',
-    'Argent Flight',
-    'Empyrean',
-    'Mahact Gene-Sorcerers',
-    'Naaz-Rokha Alliance',
-    'Nomad',
-    'Titans of Ul',
-    `Vuil'Raith Cabal`,
-    'Council Keleres',
-  ]
+  const handleAllyChange = (event: SelectChangeEvent) => {
+    let newAllyFaction: PlasticFaction | undefined = plasticFactions.find((item) => event.target.value === item.id);
+    if (newAllyFaction !== undefined) {
+      setAlliedFaction(newAllyFaction);
+    }
+  };
+
+  const handleHostileChange = (event: SelectChangeEvent) => {
+    let newHostileFaction: PlasticFaction | undefined = plasticFactions.find((item) => event.target.value === item.id);
+    if (newHostileFaction !== undefined) {
+      setHostileFaction(newHostileFaction);
+    }
+  };
 
   return (
     <Container>
@@ -113,8 +99,10 @@ function BattleCalculator() {
                   <InputLabel id="1st-player-faction">Ally Faction</InputLabel>
                   <Select
                       labelId="1st-player-faction"
+                      value={alliedFaction.id}
                       label="faction"
                       defaultValue={alliedFaction.id}
+                      onChange={handleAllyChange}
                   >
                     {plasticFactions.map((faction, index) =>
                         <MenuItem value={faction.id}>{faction.name}</MenuItem>
@@ -125,8 +113,10 @@ function BattleCalculator() {
                   <InputLabel id="2nd-player-faction">Hostile Faction</InputLabel>
                   <Select
                       labelId="2nd-player-faction"
+                      value={hostileFaction.id}
                       label="faction"
                       defaultValue={hostileFaction.id}
+                      onChange={handleHostileChange}
                   >
                     {plasticFactions.map((faction, index) =>
                         <MenuItem value={faction.id}>{faction.name}</MenuItem>
