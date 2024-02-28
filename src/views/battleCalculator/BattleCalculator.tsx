@@ -17,8 +17,9 @@ import {plasticUnits} from "../../data/plasticUnits";
 import {PlasticFaction} from "../../data/interfaces/PlasticFaction";
 import {plasticFactions} from "../../data/plasticFactions";
 
-interface Interface {
-  
+interface PlasticUnitCounts {
+  unitType: string;
+  unitCount: number;
 }
 function BattleCalculator() {
 
@@ -27,13 +28,107 @@ function BattleCalculator() {
       id: "faction_arborec",
       name: "Arborec"
     });
-  let [hostileFaction, setHostileFaction] = useState<PlasticFaction>({
+  let [hostileFaction, setHostileFaction] = useState<PlasticFaction>(
+    {
     id: "faction_federation_of_sol",
     name: "Federation of Sol"
   });
   let [alliedUnits, setAlliedUnits] = useState<PlasticUnit[]>([]);
   let [hostileUnits, setHostileUnits] = useState<PlasticUnit[]>([]);
-
+  let [alliedUnitCounts, setAlliedUnitCounts] = useState<PlasticUnitCounts[]>(
+    [
+      {
+        unitType: "war_sun",
+        unitCount: 0,
+      },
+      {
+        unitType: "cruiser",
+        unitCount: 0,
+      },
+      {
+        unitType: "dreadnought",
+        unitCount: 0,
+      },
+      {
+        unitType: "destroyer",
+        unitCount: 0,
+      },
+      {
+        unitType: "pds",
+        unitCount: 0,
+      },
+      {
+        unitType: "carrier",
+        unitCount: 0,
+      },
+      {
+        unitType: "fighter",
+        unitCount: 0,
+      },
+      {
+        unitType: "infantry",
+        unitCount: 0,
+      },
+      {
+        unitType: "space_dock",
+        unitCount: 0,
+      },
+      {
+        unitType: "flagship",
+        unitCount: 0,
+      },
+      {
+        unitType: "mech",
+        unitCount: 0,
+      },
+    ])
+  let [hostileUnitCounts, setHostileUnitCounts] = useState<PlasticUnitCounts[]>(
+    [
+      {
+        unitType: "war_sun",
+        unitCount: 0,
+      },
+      {
+        unitType: "cruiser",
+        unitCount: 0,
+      },
+      {
+        unitType: "dreadnought",
+        unitCount: 0,
+      },
+      {
+        unitType: "destroyer",
+        unitCount: 0,
+      },
+      {
+        unitType: "pds",
+        unitCount: 0,
+      },
+      {
+        unitType: "carrier",
+        unitCount: 0,
+      },
+      {
+        unitType: "fighter",
+        unitCount: 0,
+      },
+      {
+        unitType: "infantry",
+        unitCount: 0,
+      },
+      {
+        unitType: "space_dock",
+        unitCount: 0,
+      },
+      {
+        unitType: "flagship",
+        unitCount: 0,
+      },
+      {
+        unitType: "mech",
+        unitCount: 0,
+      },
+    ])
   useEffect(() => {
     let allyArray: PlasticUnit[] = plasticUnits.filter((item): item is PlasticUnit => {
       return (
@@ -142,14 +237,22 @@ function BattleCalculator() {
                       InputProps={{
                         readOnly: true,
                       }}
-                      defaultValue={0}
+                      defaultValue={
+                    alliedUnitCounts.find((item) =>
+                      allyUnit.type === item.unitType
+                    )?.unitCount
+                  }
                   />
                   <TextField
                       label={hostileUnits[index] ? hostileUnits[index].name.normal : "name"}
                       InputProps={{
                         readOnly: true,
                       }}
-                      defaultValue={0}
+                      defaultValue={
+                        hostileUnitCounts.find((item) =>
+                          hostileUnits[index]?.type === item.unitType
+                        )?.unitCount
+                      }
                   />
                   <Stack direction="row" spacing={1}>
                     <Button variant="contained" size="small">-</Button>
