@@ -187,7 +187,6 @@ function BattleCalculator() {
         };
       }
     });
-    console.log(nextAllyCount)
     setAlliedUnitCounts(nextAllyCount);
   }
 
@@ -205,16 +204,43 @@ function BattleCalculator() {
         };
       }
     });
-    console.log(nextAllyCount)
     setAlliedUnitCounts(nextAllyCount);
   }
 
-  const increaseHostileCount = () => {
-
+  const increaseHostileCount = (index: number) => {
+    const nextHostileCount: PlasticUnitCounts[] = hostileUnitCounts.map((c, i) => {
+      if (c.unitType === hostileUnits[index].type) {
+        return {
+          unitType: c.unitType,
+          unitCount: c.unitCount + 1
+        };
+      } else {
+        return {
+          unitType: c.unitType,
+          unitCount: c.unitCount
+        };
+      }
+    });
+    console.log(nextHostileCount)
+    setHostileUnitCounts(nextHostileCount);
   }
 
-  const decreaseHostileCount = () => {
-
+  const decreaseHostileCount = (index: number) => {
+    const nextHostileCount: PlasticUnitCounts[] = hostileUnitCounts.map((c, i) => {
+      if (c.unitType === hostileUnits[index].type) {
+        return {
+          unitType: c.unitType,
+          unitCount: c.unitCount - 1
+        };
+      } else {
+        return {
+          unitType: c.unitType,
+          unitCount: c.unitCount
+        };
+      }
+    });
+    console.log(nextHostileCount)
+    setHostileUnitCounts(nextHostileCount);
   }
 
   return (
@@ -312,10 +338,10 @@ function BattleCalculator() {
                   />
                   <Stack direction="row" spacing={1}>
                     <Button variant="contained" size="small" onClick={() => {
-                      decreaseHostileCount()
+                      decreaseHostileCount(index)
                     }}>-</Button>
                     <Button variant="contained" size="small" onClick={() => {
-                      increaseHostileCount()
+                      increaseHostileCount(index)
                     }}>+</Button>
                   </Stack>
                 </Stack>
