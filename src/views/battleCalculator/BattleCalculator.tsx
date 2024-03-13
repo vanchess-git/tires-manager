@@ -7,7 +7,7 @@ import {
   FormControl,
   Grid,
   InputLabel, MenuItem,
-  Select, SelectChangeEvent,
+  Select,
   Stack,
   TextField,
   Typography
@@ -16,8 +16,15 @@ import {PlasticUnit} from "../../data/interfaces/PlasticUnit";
 import {plasticUnits} from "../../data/plasticUnits";
 import {PlasticFaction} from "../../data/interfaces/PlasticFaction";
 import {plasticFactions} from "../../data/plasticFactions";
+import {PlasticUnitCount} from "../../data/interfaces/PlasticUnitCount";
+import {PlasticUnitPriority} from "../../data/interfaces/PlasticUnitPriority";
+import {
+  decreaseAllyCount, decreaseHostileCount,
+  handleAllyChange,
+  handleHostileChange,
+  increaseAllyCount, increaseHostileCount
+} from "../../utils/BattleCalculatorUtils";
 
-interface PlasticUnitCounts {unitType: string;unitCount: number;}
 function BattleCalculator() {
 
   let [alliedFaction, setAlliedFaction] = useState<PlasticFaction>({id: "faction_arborec", name: "Arborec"});
@@ -25,18 +32,34 @@ function BattleCalculator() {
   let [alliedUnits, setAlliedUnits] = useState<PlasticUnit[]>([]);
   let [hostileUnits, setHostileUnits] = useState<PlasticUnit[]>([]);
   let [resolveCombat, setResolveCombat] = useState<boolean>(false);
-  let [alliedUnitCounts, setAlliedUnitCounts] = useState<PlasticUnitCounts[]>(
+  let [alliedUnitCounts, setAlliedUnitCounts] = useState<PlasticUnitCount[]>(
     [
       {unitType: "war_sun", unitCount: 0,}, {unitType: "cruiser", unitCount: 0,}, {unitType: "dreadnought", unitCount: 0,},
       {unitType: "destroyer", unitCount: 0,}, {unitType: "pds", unitCount: 0,}, {unitType: "carrier", unitCount: 0,},
       {unitType: "fighter", unitCount: 0,}, {unitType: "infantry", unitCount: 0,}, {unitType: "space_dock", unitCount: 0,},
-      {unitType: "flagship", unitCount: 0,}, {unitType: "mech", unitCount: 0,},])
-  let [hostileUnitCounts, setHostileUnitCounts] = useState<PlasticUnitCounts[]>(
+      {unitType: "flagship", unitCount: 0,}, {unitType: "mech", unitCount: 0,},
+    ])
+  let [hostileUnitCounts, setHostileUnitCounts] = useState<PlasticUnitCount[]>(
     [
       {unitType: "war_sun", unitCount: 0,}, {unitType: "cruiser", unitCount: 0,}, {unitType: "dreadnought", unitCount: 0,},
       {unitType: "destroyer", unitCount: 0,}, {unitType: "pds", unitCount: 0,}, {unitType: "carrier", unitCount: 0,},
       {unitType: "fighter", unitCount: 0,}, {unitType: "infantry", unitCount: 0,}, {unitType: "space_dock", unitCount: 0,},
-      {unitType: "flagship", unitCount: 0,}, {unitType: "mech", unitCount: 0,},])
+      {unitType: "flagship", unitCount: 0,}, {unitType: "mech", unitCount: 0,},
+    ])
+  let [alliedUnitPriorities, setAlliedUnitPriorities] = useState<PlasticUnitPriority[]>(
+    [
+      {unitType: "war_sun", unitPriority: 8,}, {unitType: "cruiser", unitPriority: 3,}, {unitType: "dreadnought", unitPriority: 5,},
+      {unitType: "destroyer", unitPriority: 2,}, {unitType: "pds", unitPriority: 9,}, {unitType: "carrier", unitPriority: 7,},
+      {unitType: "fighter", unitPriority: 0,}, {unitType: "infantry", unitPriority: 1,}, {unitType: "space_dock", unitPriority: 10,},
+      {unitType: "flagship", unitPriority: 6,}, {unitType: "mech", unitPriority: 4,},
+    ])
+  let [hostileUnitPriorities, setHostileUnitPriorities] = useState<PlasticUnitPriority[]>(
+    [
+      {unitType: "war_sun", unitPriority: 8,}, {unitType: "cruiser", unitPriority: 3,}, {unitType: "dreadnought", unitPriority: 5,},
+      {unitType: "destroyer", unitPriority: 2,}, {unitType: "pds", unitPriority: 9,}, {unitType: "carrier", unitPriority: 7,},
+      {unitType: "fighter", unitPriority: 0,}, {unitType: "infantry", unitPriority: 1,}, {unitType: "space_dock", unitPriority: 10,},
+      {unitType: "flagship", unitPriority: 6,}, {unitType: "mech", unitPriority: 4,},
+    ])
 
   useEffect(() => {
     let allyArray: PlasticUnit[] = plasticUnits.filter((item): item is PlasticUnit => {
@@ -54,10 +77,10 @@ function BattleCalculator() {
   }, [alliedFaction, hostileFaction])
 
   useEffect(() => {
-    let alliesInCombat: PlasticUnitCounts[] = alliedUnitCounts.filter((item):item is PlasticUnitCounts => {
+    let alliesInCombat: PlasticUnitCount[] = alliedUnitCounts.filter((item):item is PlasticUnitCount => {
       return (typeof item == "object" && item !== null && item.unitCount > 0)
     });
-    let hostilesInCombat: PlasticUnitCounts[] = hostileUnitCounts.filter((item):item is PlasticUnitCounts => {
+    let hostilesInCombat: PlasticUnitCount[] = hostileUnitCounts.filter((item):item is PlasticUnitCount => {
       return (typeof item == "object" && item !== null && item.unitCount > 0)
     });
     let alliesTotal: number = alliesInCombat.reduce((total, item) => total + item.unitCount, 0);
@@ -112,65 +135,6 @@ function BattleCalculator() {
     }
   }, [resolveCombat]);
 
-
-  const handleAllyChange = (event: SelectChangeEvent) => {
-    let newAllyFaction: PlasticFaction | undefined = plasticFactions.find((item) => event.target.value === item.id);
-    if (newAllyFaction !== undefined) {
-      setAlliedFaction(newAllyFaction);
-    }
-  };
-
-  const handleHostileChange = (event: SelectChangeEvent) => {
-    let newHostileFaction: PlasticFaction | undefined = plasticFactions.find((item) => event.target.value === item.id);
-    if (newHostileFaction !== undefined) {
-      setHostileFaction(newHostileFaction);
-    }
-  };
-
-  const increaseAllyCount = (allyUnit: PlasticUnit, index: number) => {
-    const nextAllyCount: PlasticUnitCounts[] = alliedUnitCounts.map((c, i) => {
-      if (c.unitType === allyUnit.type) {
-        return {unitType: c.unitType, unitCount: c.unitCount + 1};
-      } else {
-        return {unitType: c.unitType, unitCount: c.unitCount};
-      }
-    });
-    setAlliedUnitCounts(nextAllyCount);
-  }
-
-  const decreaseAllyCount = (allyUnit: PlasticUnit, index: number) => {
-    const nextAllyCount: PlasticUnitCounts[] = alliedUnitCounts.map((c, i) => {
-      if (c.unitType === allyUnit.type) {
-        return {unitType: c.unitType, unitCount: c.unitCount - 1};
-      } else {
-        return {unitType: c.unitType, unitCount: c.unitCount};
-      }
-    });
-    setAlliedUnitCounts(nextAllyCount);
-  }
-
-  const increaseHostileCount = (index: number) => {
-    const nextHostileCount: PlasticUnitCounts[] = hostileUnitCounts.map((c, i) => {
-      if (c.unitType === hostileUnits[index].type) {
-        return {unitType: c.unitType, unitCount: c.unitCount + 1};
-      } else {
-        return {unitType: c.unitType, unitCount: c.unitCount};
-      }
-    });
-    setHostileUnitCounts(nextHostileCount);
-  }
-
-  const decreaseHostileCount = (index: number) => {
-    const nextHostileCount: PlasticUnitCounts[] = hostileUnitCounts.map((c, i) => {
-      if (c.unitType === hostileUnits[index].type) {
-        return {unitType: c.unitType, unitCount: c.unitCount - 1};
-      } else {
-        return {unitType: c.unitType, unitCount: c.unitCount};
-      }
-    });
-    setHostileUnitCounts(nextHostileCount);
-  }
-
   return (
     <Container>
       <Typography>
@@ -199,7 +163,7 @@ function BattleCalculator() {
                       value={alliedFaction.id}
                       label="faction"
                       defaultValue={alliedFaction.id}
-                      onChange={handleAllyChange}
+                      onChange={(event) => setAlliedFaction(handleAllyChange(event) || alliedFaction)}
                   >
                     {plasticFactions.map((faction, index) =>
                         <MenuItem value={faction.id}>{faction.name}</MenuItem>
@@ -213,7 +177,7 @@ function BattleCalculator() {
                       value={hostileFaction.id}
                       label="faction"
                       defaultValue={hostileFaction.id}
-                      onChange={handleHostileChange}
+                      onChange={(event) => setHostileFaction(handleHostileChange(event) || alliedFaction)}
                   >
                     {plasticFactions.map((faction, index) =>
                         <MenuItem value={faction.id}>{faction.name}</MenuItem>
@@ -229,10 +193,10 @@ function BattleCalculator() {
                 <Stack spacing={2}>
                   <Stack direction="row" spacing={1}>
                     <Button variant="contained" size="small" onClick={() => {
-                      decreaseAllyCount(allyUnit, index)
+                      setAlliedUnitCounts(decreaseAllyCount(allyUnit, index, alliedUnitCounts) || alliedUnitCounts)
                     }}>-</Button>
                     <Button variant="contained" size="small" onClick={() => {
-                      increaseAllyCount(allyUnit, index)
+                      setAlliedUnitCounts(increaseAllyCount(allyUnit, index, alliedUnitCounts) || alliedUnitCounts)
                     }}>+</Button>
                   </Stack>
                   <TextField
@@ -266,10 +230,10 @@ function BattleCalculator() {
                   />
                   <Stack direction="row" spacing={1}>
                     <Button variant="contained" size="small" onClick={() => {
-                      decreaseHostileCount(index)
+                      setHostileUnitCounts(decreaseHostileCount(index, hostileUnitCounts, hostileUnits) || hostileUnitCounts)
                     }}>-</Button>
                     <Button variant="contained" size="small" onClick={() => {
-                      increaseHostileCount(index)
+                      setHostileUnitCounts(increaseHostileCount(index, hostileUnitCounts, hostileUnits) || hostileUnitCounts)
                     }}>+</Button>
                   </Stack>
                 </Stack>
