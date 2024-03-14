@@ -22,59 +22,26 @@ import {
   decreaseAllyCount, decreaseHostileCount,
   handleAllyChange,
   handleHostileChange,
-  increaseAllyCount, increaseHostileCount
+  increaseAllyCount, increaseHostileCount, plasticUnitsArrById
 } from "../../utils/BattleCalculatorUtils";
+import {defaultFaction} from "../../data/defaultValues/defaultFaction";
+import {defaultUnitCounts} from "../../data/defaultValues/defaultUnitCounts";
+import {defaultUnitPriorities} from "../../data/defaultValues/defaultUnitPriorities";
 
 function BattleCalculator() {
 
-  let [alliedFaction, setAlliedFaction] = useState<PlasticFaction>({id: "faction_arborec", name: "Arborec"});
-  let [hostileFaction, setHostileFaction] = useState<PlasticFaction>({id: "faction_federation_of_sol", name: "Federation of Sol"});
+  let [alliedFaction, setAlliedFaction] = useState<PlasticFaction>(defaultFaction);
+  let [hostileFaction, setHostileFaction] = useState<PlasticFaction>(defaultFaction);
   let [alliedUnits, setAlliedUnits] = useState<PlasticUnit[]>([]);
   let [hostileUnits, setHostileUnits] = useState<PlasticUnit[]>([]);
   let [resolveCombat, setResolveCombat] = useState<boolean>(false);
-  let [alliedUnitCounts, setAlliedUnitCounts] = useState<PlasticUnitCount[]>(
-    [
-      {unitType: "war_sun", unitCount: 0,}, {unitType: "cruiser", unitCount: 0,}, {unitType: "dreadnought", unitCount: 0,},
-      {unitType: "destroyer", unitCount: 0,}, {unitType: "pds", unitCount: 0,}, {unitType: "carrier", unitCount: 0,},
-      {unitType: "fighter", unitCount: 0,}, {unitType: "infantry", unitCount: 0,}, {unitType: "space_dock", unitCount: 0,},
-      {unitType: "flagship", unitCount: 0,}, {unitType: "mech", unitCount: 0,},
-    ])
-  let [hostileUnitCounts, setHostileUnitCounts] = useState<PlasticUnitCount[]>(
-    [
-      {unitType: "war_sun", unitCount: 0,}, {unitType: "cruiser", unitCount: 0,}, {unitType: "dreadnought", unitCount: 0,},
-      {unitType: "destroyer", unitCount: 0,}, {unitType: "pds", unitCount: 0,}, {unitType: "carrier", unitCount: 0,},
-      {unitType: "fighter", unitCount: 0,}, {unitType: "infantry", unitCount: 0,}, {unitType: "space_dock", unitCount: 0,},
-      {unitType: "flagship", unitCount: 0,}, {unitType: "mech", unitCount: 0,},
-    ])
-  let [alliedUnitPriorities, setAlliedUnitPriorities] = useState<PlasticUnitPriority[]>(
-    [
-      {unitType: "war_sun", unitPriority: 8,}, {unitType: "cruiser", unitPriority: 3,}, {unitType: "dreadnought", unitPriority: 5,},
-      {unitType: "destroyer", unitPriority: 2,}, {unitType: "pds", unitPriority: 9,}, {unitType: "carrier", unitPriority: 7,},
-      {unitType: "fighter", unitPriority: 0,}, {unitType: "infantry", unitPriority: 1,}, {unitType: "space_dock", unitPriority: 10,},
-      {unitType: "flagship", unitPriority: 6,}, {unitType: "mech", unitPriority: 4,},
-    ])
-  let [hostileUnitPriorities, setHostileUnitPriorities] = useState<PlasticUnitPriority[]>(
-    [
-      {unitType: "war_sun", unitPriority: 8,}, {unitType: "cruiser", unitPriority: 3,}, {unitType: "dreadnought", unitPriority: 5,},
-      {unitType: "destroyer", unitPriority: 2,}, {unitType: "pds", unitPriority: 9,}, {unitType: "carrier", unitPriority: 7,},
-      {unitType: "fighter", unitPriority: 0,}, {unitType: "infantry", unitPriority: 1,}, {unitType: "space_dock", unitPriority: 10,},
-      {unitType: "flagship", unitPriority: 6,}, {unitType: "mech", unitPriority: 4,},
-    ])
+  let [alliedUnitCounts, setAlliedUnitCounts] = useState<PlasticUnitCount[]>(defaultUnitCounts)
+  let [hostileUnitCounts, setHostileUnitCounts] = useState<PlasticUnitCount[]>(defaultUnitCounts)
+  let [alliedUnitPriorities, setAlliedUnitPriorities] = useState<PlasticUnitPriority[]>(defaultUnitPriorities)
+  let [hostileUnitPriorities, setHostileUnitPriorities] = useState<PlasticUnitPriority[]>(defaultUnitPriorities)
 
-  useEffect(() => {
-    let allyArray: PlasticUnit[] = plasticUnits.filter((item): item is PlasticUnit => {
-      return (typeof item === "object" && item !== null && !Array.isArray(item) &&
-        "factions" in item && Array.isArray(item.factions) && item.factions.includes(alliedFaction.id))
-    })
-    setAlliedUnits(allyArray);
-
-    let hostileArray: PlasticUnit[] = plasticUnits.filter((item): item is PlasticUnit => {
-      return (typeof item === "object" && item !== null && !Array.isArray(item) &&
-        "factions" in item && Array.isArray(item.factions) && item.factions.includes(hostileFaction.id))
-    })
-    setHostileUnits(hostileArray);
-
-  }, [alliedFaction, hostileFaction])
+  useEffect(() => {setAlliedUnits(plasticUnitsArrById(alliedFaction.id) || alliedUnits);}, [alliedFaction])
+  useEffect(() => {setHostileUnits(plasticUnitsArrById(hostileFaction.id) || hostileUnits);}, [hostileFaction])
 
   useEffect(() => {
     let alliesInCombat: PlasticUnitCount[] = alliedUnitCounts.filter((item):item is PlasticUnitCount => {

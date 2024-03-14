@@ -3,6 +3,7 @@ import {PlasticFaction} from "../data/interfaces/PlasticFaction";
 import {plasticFactions} from "../data/plasticFactions";
 import {PlasticUnit} from "../data/interfaces/PlasticUnit";
 import {PlasticUnitCount} from "../data/interfaces/PlasticUnitCount";
+import {plasticUnits} from "../data/plasticUnits";
 
 const handleAllyChange = (event: SelectChangeEvent): PlasticFaction | undefined => {
   let newAllyFaction: PlasticFaction | undefined = plasticFactions.find((item) => event.target.value === item.id);
@@ -62,11 +63,20 @@ const decreaseHostileCount = (index: number, hostileUnitCounts: PlasticUnitCount
   return nextHostileCount;
 }
 
+const plasticUnitsArrById = (id: string): PlasticUnit[] | undefined => {
+  let plasticUnitsArr: PlasticUnit[] = plasticUnits.filter((item): item is PlasticUnit => {
+    return (typeof item === "object" && item !== null && !Array.isArray(item) &&
+        "factions" in item && Array.isArray(item.factions) && item.factions.includes(id))
+  })
+  return plasticUnitsArr;
+}
+
 export {
   handleAllyChange,
   handleHostileChange,
   increaseAllyCount,
   decreaseAllyCount,
   increaseHostileCount,
-  decreaseHostileCount
+  decreaseHostileCount,
+  plasticUnitsArrById,
 }
