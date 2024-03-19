@@ -19,14 +19,18 @@ import {plasticFactions} from "../../data/plasticFactions";
 import {PlasticUnitCount} from "../../data/interfaces/PlasticUnitCount";
 import {PlasticUnitPriority} from "../../data/interfaces/PlasticUnitPriority";
 import {
-  decreaseAllyCount, decreaseHostileCount,
-  handleAllyChange,
-  handleHostileChange,
-  increaseAllyCount, increaseHostileCount, plasticUnitsArrById
+  calculateBattle,
+  decreaseUnitCount,
+  decreaseUnitCountByIndex,
+  handleFactionChange,
+  increaseUnitCount,
+  increaseUnitCountByIndex,
+  plasticUnitsArrById
 } from "../../utils/BattleCalculatorUtils";
 import {defaultFaction} from "../../data/defaultValues/defaultFaction";
 import {defaultUnitCounts} from "../../data/defaultValues/defaultUnitCounts";
 import {defaultUnitPriorities} from "../../data/defaultValues/defaultUnitPriorities";
+import {CombatResults} from "../../data/interfaces/CombatResults";
 
 function BattleCalculator() {
 
@@ -42,70 +46,22 @@ function BattleCalculator() {
 
   useEffect(() => {setAlliedUnits(plasticUnitsArrById(alliedFaction.id) || alliedUnits);}, [alliedFaction])
   useEffect(() => {setHostileUnits(plasticUnitsArrById(hostileFaction.id) || hostileUnits);}, [hostileFaction])
-
   useEffect(() => {
-    /** TODO Create:
-     * TODO -- an interface for combat results == 1st version ready!
-     * TODO -- a function for calculating combat results == started
-     * TODO -- call the function here and store the results to a state
-     * TODO -- use a boolean in a state flip whenever a combat is supposed to be calculated
-     * */
-    let alliesInCombat: PlasticUnitCount[] = alliedUnitCounts.filter((item):item is PlasticUnitCount => {
-      return (typeof item == "object" && item !== null && item.unitCount > 0)
-    });
-    let hostilesInCombat: PlasticUnitCount[] = hostileUnitCounts.filter((item):item is PlasticUnitCount => {
-      return (typeof item == "object" && item !== null && item.unitCount > 0)
-    });
-    let alliesTotal: number = alliesInCombat.reduce((total, item) => total + item.unitCount, 0);
-    let hostilesTotal: number = hostilesInCombat.reduce((total, item) => total + item.unitCount, 0);
-    // the combat loop
-    while (alliesTotal > 0 && hostilesTotal > 0) {
-
-      let allyHits: number = alliesInCombat.map((item): number => {
-        let currentShip: PlasticUnit | undefined = alliedUnits.find((item1) => item.unitType === item1.type);
-        let currentShipHits: number = 0;
-        if (
-          currentShip?.combat.normal.noOfRolls !== undefined &&
-          currentShip?.combat.normal.strength !== undefined
-        ) {
-          for (let j = 0; j < item.unitCount; j++) {
-            for (let i = 0; i < currentShip.combat.normal.noOfRolls; i++) {
-              let newRoll: number = Math.floor(Math.random() * 10) + 1;
-              if (newRoll >= currentShip.combat.normal.strength) {
-                currentShipHits += 1;
-              }
-            }
-          }
-        }
-        return currentShipHits;
-      }).reduce((total, hits) => total + hits, 0);
-
-      let hostileHits: number = hostilesInCombat.map((item): number => {
-        let currentShip: PlasticUnit | undefined = hostileUnits.find((item1) => item.unitType === item1.type);
-        let currentShipHits: number = 0;
-        if (
-          currentShip?.combat.normal.noOfRolls !== undefined &&
-          currentShip?.combat.normal.strength !== undefined
-        ) {
-          for (let j = 0; j < item.unitCount; j++) {
-            for (let i = 0; i < currentShip.combat.normal.noOfRolls; i++) {
-              let newRoll: number = Math.floor(Math.random() * 10) + 1;
-              if (newRoll >= currentShip.combat.normal.strength) {
-                currentShipHits += 1;
-              }
-            }
-          }
-        }
-        return currentShipHits;
-      }).reduce((total, hits) => total + hits, 0);
-
-      alliesTotal -= hostileHits;
-      hostilesTotal -= allyHits;
-
-      while (allyHits > 0) {
-
-      }
-    }
+    //TODO Create:
+    // TODO -- an interface for combat results == 1st version ready!
+    // TODO -- a function for calculating combat results == started
+    let combatResults: CombatResults = calculateBattle(
+      alliedFaction,
+      hostileFaction,
+      alliedUnits,
+      hostileUnits,
+      alliedUnitCounts,
+      hostileUnitCounts,
+      alliedUnitPriorities,
+      hostileUnitPriorities,
+    );
+    // TODO -- call the function here and store the results to a state
+    // TODO -- use a boolean in a state flip whenever a combat is supposed to be calculated
   }, [resolveCombat]);
 
   return (
@@ -136,7 +92,7 @@ function BattleCalculator() {
                       value={alliedFaction.id}
                       label="faction"
                       defaultValue={alliedFaction.id}
-                      onChange={(event) => setAlliedFaction(handleAllyChange(event) || alliedFaction)}
+                      onChange={(event) => setAlliedFaction(handleFactionChange(event) || alliedFaction)}
                   >
                     {plasticFactions.map((faction, index) =>
                         <MenuItem value={faction.id}>{faction.name}</MenuItem>
@@ -150,7 +106,7 @@ function BattleCalculator() {
                       value={hostileFaction.id}
                       label="faction"
                       defaultValue={hostileFaction.id}
-                      onChange={(event) => setHostileFaction(handleHostileChange(event) || alliedFaction)}
+                      onChange={(event) => setHostileFaction(handleFactionChange(event) || hostileFaction)}
                   >
                     {plasticFactions.map((faction, index) =>
                         <MenuItem value={faction.id}>{faction.name}</MenuItem>
@@ -166,10 +122,10 @@ function BattleCalculator() {
                 <Stack spacing={2}>
                   <Stack direction="row" spacing={1}>
                     <Button variant="contained" size="small" onClick={() => {
-                      setAlliedUnitCounts(decreaseAllyCount(allyUnit, index, alliedUnitCounts) || alliedUnitCounts)
+                      setAlliedUnitCounts(decreaseUnitCount(allyUnit, index, alliedUnitCounts) || alliedUnitCounts)
                     }}>-</Button>
                     <Button variant="contained" size="small" onClick={() => {
-                      setAlliedUnitCounts(increaseAllyCount(allyUnit, index, alliedUnitCounts) || alliedUnitCounts)
+                      setAlliedUnitCounts(increaseUnitCount(allyUnit, index, alliedUnitCounts) || alliedUnitCounts)
                     }}>+</Button>
                   </Stack>
                   <TextField
@@ -203,10 +159,10 @@ function BattleCalculator() {
                   />
                   <Stack direction="row" spacing={1}>
                     <Button variant="contained" size="small" onClick={() => {
-                      setHostileUnitCounts(decreaseHostileCount(index, hostileUnitCounts, hostileUnits) || hostileUnitCounts)
+                      setHostileUnitCounts(decreaseUnitCountByIndex(index, hostileUnitCounts, hostileUnits) || hostileUnitCounts)
                     }}>-</Button>
                     <Button variant="contained" size="small" onClick={() => {
-                      setHostileUnitCounts(increaseHostileCount(index, hostileUnitCounts, hostileUnits) || hostileUnitCounts)
+                      setHostileUnitCounts(increaseUnitCountByIndex(index, hostileUnitCounts, hostileUnits) || hostileUnitCounts)
                     }}>+</Button>
                   </Stack>
                 </Stack>
