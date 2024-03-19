@@ -4,6 +4,8 @@ import {plasticFactions} from "../data/plasticFactions";
 import {PlasticUnit} from "../data/interfaces/PlasticUnit";
 import {PlasticUnitCount} from "../data/interfaces/PlasticUnitCount";
 import {plasticUnits} from "../data/plasticUnits";
+import {CombatResults} from "../data/interfaces/CombatResults";
+import {PlasticUnitPriority} from "../data/interfaces/PlasticUnitPriority";
 
 const handleAllyChange = (event: SelectChangeEvent): PlasticFaction | undefined => {
   let newAllyFaction: PlasticFaction | undefined = plasticFactions.find((item) => event.target.value === item.id);
@@ -71,6 +73,57 @@ const plasticUnitsArrById = (id: string): PlasticUnit[] | undefined => {
   return plasticUnitsArr;
 }
 
+const calculateBattle = (
+    alliedFaction: PlasticFaction,
+    hostileFaction: PlasticFaction,
+    alliedUnits: PlasticUnit[],
+    hostileUnits: PlasticUnit[],
+    alliedUnitCounts: PlasticUnitCount[],
+    hostileUnitCounts: PlasticUnitCount[],
+    alliedUnitPriorities: PlasticUnitPriority[],
+    hostileUnitPriorities: PlasticUnitPriority[],
+): CombatResults | undefined => {
+  // TODO figure out who are in combat
+  let alliesLeft = alliedUnitCounts;
+  let hostilesLeft = hostileUnitCounts;
+  // TODO figure out type of combat: space or ground
+
+  // TODO roll for combat
+
+  // TODO return the results
+  return undefined;
+}
+
+const rollCombatDice = (
+    faction: PlasticFaction,
+    units: PlasticUnit[],
+    unitCounts: PlasticUnitCount[],
+): number => {
+  let hits: number = unitCounts.map((item): number => {
+    if (item.unitCount > 0) {
+      let currentUnit: PlasticUnit | undefined = units.find((item1) => item.unitType === item1.type);
+      let currentUnitHits: number = 0;
+      if (
+        currentUnit?.combat.normal.noOfRolls !== undefined &&
+        currentUnit?.combat.normal.strength !== undefined
+      ) {
+        for (let i: number = 0; i < item.unitCount; i++) {
+          for (let j: number = 0; j < currentUnit.combat.normal.noOfRolls; j++) {
+            let newRoll: number = Math.floor(Math.random() * 10) + 1;
+            if (newRoll >= currentUnit.combat.normal.strength) {
+              currentUnitHits += 1;
+            }
+          }
+        }
+      }
+      return currentUnitHits;
+    } else {
+      return 0;
+    }
+  }).reduce((totalIn, hitsIn) => totalIn + hitsIn, 0) as number;
+  return hits;
+}
+
 export {
   handleAllyChange,
   handleHostileChange,
@@ -79,4 +132,5 @@ export {
   increaseHostileCount,
   decreaseHostileCount,
   plasticUnitsArrById,
+  calculateBattle,
 }

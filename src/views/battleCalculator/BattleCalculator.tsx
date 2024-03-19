@@ -44,6 +44,12 @@ function BattleCalculator() {
   useEffect(() => {setHostileUnits(plasticUnitsArrById(hostileFaction.id) || hostileUnits);}, [hostileFaction])
 
   useEffect(() => {
+    /** TODO Create:
+     * TODO -- an interface for combat results == 1st version ready!
+     * TODO -- a function for calculating combat results == started
+     * TODO -- call the function here and store the results to a state
+     * TODO -- use a boolean in a state flip whenever a combat is supposed to be calculated
+     * */
     let alliesInCombat: PlasticUnitCount[] = alliedUnitCounts.filter((item):item is PlasticUnitCount => {
       return (typeof item == "object" && item !== null && item.unitCount > 0)
     });
