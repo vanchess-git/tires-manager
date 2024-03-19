@@ -76,29 +76,24 @@ const calculateBattle = (
     attackerUnitPriorities: PlasticUnitPriority[],
     defenderUnitPriorities: PlasticUnitPriority[],
 ): CombatResults => {
-  let combatResults: CombatResults = {
-    resultType: "draw",
-    factions: {
-      attacker: attackerFaction.name,
-      defender: defenderFaction.name,
-    },
-    unitCounts: {
-      attacker: attackerUnitCounts,
-      defender: defenderUnitCounts,
-    }
-  }
+  let combatOngoing: boolean = true;
+
   // TODO figure out who are in combat
-  let alliesLeft: PlasticUnitCount[] = attackerUnitCounts;
-  let hostilesLeft: PlasticUnitCount[] = defenderUnitCounts;
+  let attackersLeft: PlasticUnitCount[] = attackerUnitCounts;
+  let defendersLeft: PlasticUnitCount[] = defenderUnitCounts;
   // TODO figure out type of combat: space or ground
 
-  // TODO roll for combat
-  let allyHits: number = rollCombatDice(attackerFaction, attackerUnits, alliesLeft)
-  let hostileHits: number = rollCombatDice(defenderFaction, defenderUnits, hostilesLeft)
-  alliesLeft = assignHits(hostileHits, alliesLeft, attackerUnits, attackerUnitPriorities)
-  hostilesLeft = assignHits(allyHits, hostilesLeft, defenderUnits, defenderUnitPriorities)
-  // TODO return the results
-  return combatResults;
+  // roll dice and assign hits
+  while (combatOngoing) {
+    let allyHits: number = rollCombatDice(attackerFaction, attackerUnits, attackersLeft)
+    let hostileHits: number = rollCombatDice(defenderFaction, defenderUnits, defendersLeft)
+    attackersLeft = assignHits(hostileHits, attackersLeft, attackerUnits, attackerUnitPriorities)
+    defendersLeft = assignHits(allyHits, defendersLeft, defenderUnits, defenderUnitPriorities)
+    combatOngoing = checkIfCombatContinues(attackersLeft, defendersLeft)
+  }
+
+  // return the results of a single combat
+  return checkCombatResults(attackerFaction, defenderFaction, attackersLeft, defendersLeft);
 }
 
 const rollCombatDice = (
@@ -160,6 +155,66 @@ const assignHits = (
     }
   }
   return unitCountsLeft;
+}
+
+const checkIfCombatContinues = (
+  attackersLeft: PlasticUnitCount[],
+  defendersLeft: PlasticUnitCount[],
+): boolean => {
+  const totalAttackersLeft: number = attackersLeft.reduce((total, unit) => total + unit.unitCount, 0);
+  const totalDefendersLeft: number = defendersLeft.reduce((total, unit) => total + unit.unitCount, 0);
+  if (totalAttackersLeft <= 0 || totalDefendersLeft <= 0) {
+    return false;
+  } else {
+    return true;
+  }
+}
+
+const checkCombatResults = (
+  attackerFaction: PlasticFaction,
+  defenderFaction: PlasticFaction,
+  attackersLeft: PlasticUnitCount[],
+  defendersLeft: PlasticUnitCount[],
+): CombatResults => {
+  const totalAttackersLeft: number = attackersLeft.reduce((total, unit) => total + unit.unitCount, 0);
+  const totalDefendersLeft: number = defendersLeft.reduce((total, unit) => total + unit.unitCount, 0);
+  if (totalAttackersLeft <= 0 && totalDefendersLeft <= 0) {
+    return {
+      resultType: "draw",
+      factions: {
+        attacker: attackerFaction.name,
+        defender: defenderFaction.name,
+      },
+      unitCounts: {
+        attacker: attackersLeft,
+        defender: defendersLeft,
+      }
+    }
+  } else if (totalAttackersLeft > 0 && totalDefendersLeft <= 0) {
+    return {
+      resultType: "attacker_win",
+      factions: {
+        attacker: attackerFaction.name,
+        defender: defenderFaction.name,
+      },
+      unitCounts: {
+        attacker: attackersLeft,
+        defender: defendersLeft,
+      }
+    }
+  } else {
+    return {
+      resultType: "defender_win",
+      factions: {
+        attacker: attackerFaction.name,
+        defender: defenderFaction.name,
+      },
+      unitCounts: {
+        attacker: attackersLeft,
+        defender: defendersLeft,
+      }
+    }
+  }
 }
 
 export {
