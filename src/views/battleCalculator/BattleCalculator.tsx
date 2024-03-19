@@ -34,31 +34,31 @@ import {CombatResults} from "../../data/interfaces/CombatResults";
 
 function BattleCalculator() {
 
-  let [alliedFaction, setAlliedFaction] = useState<PlasticFaction>(defaultFaction);
-  let [hostileFaction, setHostileFaction] = useState<PlasticFaction>(defaultFaction);
-  let [alliedUnits, setAlliedUnits] = useState<PlasticUnit[]>([]);
-  let [hostileUnits, setHostileUnits] = useState<PlasticUnit[]>([]);
+  let [attackerFaction, setAttackerFaction] = useState<PlasticFaction>(defaultFaction);
+  let [defenderFaction, setDefenderFaction] = useState<PlasticFaction>(defaultFaction);
+  let [attackerUnits, setAttackerUnits] = useState<PlasticUnit[]>([]);
+  let [defenderUnits, setDefenderUnits] = useState<PlasticUnit[]>([]);
   let [resolveCombat, setResolveCombat] = useState<boolean>(false);
-  let [alliedUnitCounts, setAlliedUnitCounts] = useState<PlasticUnitCount[]>(defaultUnitCounts)
-  let [hostileUnitCounts, setHostileUnitCounts] = useState<PlasticUnitCount[]>(defaultUnitCounts)
-  let [alliedUnitPriorities, setAlliedUnitPriorities] = useState<PlasticUnitPriority[]>(defaultUnitPriorities)
-  let [hostileUnitPriorities, setHostileUnitPriorities] = useState<PlasticUnitPriority[]>(defaultUnitPriorities)
+  let [attackerUnitCounts, setAttackerUnitCounts] = useState<PlasticUnitCount[]>(defaultUnitCounts)
+  let [defenderUnitCounts, setDefenderUnitCounts] = useState<PlasticUnitCount[]>(defaultUnitCounts)
+  let [attackerUnitPriorities, setAttackerUnitPriorities] = useState<PlasticUnitPriority[]>(defaultUnitPriorities)
+  let [defenderUnitPriorities, setDefenderUnitPriorities] = useState<PlasticUnitPriority[]>(defaultUnitPriorities)
 
-  useEffect(() => {setAlliedUnits(plasticUnitsArrById(alliedFaction.id) || alliedUnits);}, [alliedFaction])
-  useEffect(() => {setHostileUnits(plasticUnitsArrById(hostileFaction.id) || hostileUnits);}, [hostileFaction])
+  useEffect(() => {setAttackerUnits(plasticUnitsArrById(attackerFaction.id) || attackerUnits);}, [attackerFaction])
+  useEffect(() => {setDefenderUnits(plasticUnitsArrById(defenderFaction.id) || defenderUnits);}, [defenderFaction])
   useEffect(() => {
     //TODO Create:
     // TODO -- an interface for combat results == 1st version ready!
     // TODO -- a function for calculating combat results == started
     let combatResults: CombatResults = calculateBattle(
-      alliedFaction,
-      hostileFaction,
-      alliedUnits,
-      hostileUnits,
-      alliedUnitCounts,
-      hostileUnitCounts,
-      alliedUnitPriorities,
-      hostileUnitPriorities,
+      attackerFaction,
+      defenderFaction,
+      attackerUnits,
+      defenderUnits,
+      attackerUnitCounts,
+      defenderUnitCounts,
+      attackerUnitPriorities,
+      defenderUnitPriorities,
     );
     // TODO -- call the function here and store the results to a state
     // TODO -- use a boolean in a state flip whenever a combat is supposed to be calculated
@@ -89,10 +89,10 @@ function BattleCalculator() {
                   <InputLabel id="1st-player-faction">Ally Faction</InputLabel>
                   <Select
                       labelId="1st-player-faction"
-                      value={alliedFaction.id}
+                      value={attackerFaction.id}
                       label="faction"
-                      defaultValue={alliedFaction.id}
-                      onChange={(event) => setAlliedFaction(handleFactionChange(event) || alliedFaction)}
+                      defaultValue={attackerFaction.id}
+                      onChange={(event) => setAttackerFaction(handleFactionChange(event) || attackerFaction)}
                   >
                     {plasticFactions.map((faction, index) =>
                         <MenuItem value={faction.id}>{faction.name}</MenuItem>
@@ -103,10 +103,10 @@ function BattleCalculator() {
                   <InputLabel id="2nd-player-faction">Hostile Faction</InputLabel>
                   <Select
                       labelId="2nd-player-faction"
-                      value={hostileFaction.id}
+                      value={defenderFaction.id}
                       label="faction"
-                      defaultValue={hostileFaction.id}
-                      onChange={(event) => setHostileFaction(handleFactionChange(event) || hostileFaction)}
+                      defaultValue={defenderFaction.id}
+                      onChange={(event) => setDefenderFaction(handleFactionChange(event) || defenderFaction)}
                   >
                     {plasticFactions.map((faction, index) =>
                         <MenuItem value={faction.id}>{faction.name}</MenuItem>
@@ -115,17 +115,17 @@ function BattleCalculator() {
                 </FormControl>
               </Stack>
             </Grid>
-            {alliedUnits.map((allyUnit, index) =>
+            {attackerUnits.map((allyUnit, index) =>
               <Grid item xs={2}
                 spacing={2}
               >
                 <Stack spacing={2}>
                   <Stack direction="row" spacing={1}>
                     <Button variant="contained" size="small" onClick={() => {
-                      setAlliedUnitCounts(decreaseUnitCount(allyUnit, index, alliedUnitCounts) || alliedUnitCounts)
+                      setAttackerUnitCounts(decreaseUnitCount(allyUnit, index, attackerUnitCounts) || attackerUnitCounts)
                     }}>-</Button>
                     <Button variant="contained" size="small" onClick={() => {
-                      setAlliedUnitCounts(increaseUnitCount(allyUnit, index, alliedUnitCounts) || alliedUnitCounts)
+                      setAttackerUnitCounts(increaseUnitCount(allyUnit, index, attackerUnitCounts) || attackerUnitCounts)
                     }}>+</Button>
                   </Stack>
                   <TextField
@@ -134,35 +134,35 @@ function BattleCalculator() {
                         readOnly: true,
                       }}
                       defaultValue={
-                    alliedUnitCounts.find((item) =>
+                    attackerUnitCounts.find((item) =>
                       allyUnit.type === item.unitType
                     )?.unitCount
                   }
-                      value={alliedUnitCounts.find((item) =>
+                      value={attackerUnitCounts.find((item) =>
                         allyUnit.type === item.unitType
                       )?.unitCount}
                   />
                   <TextField
-                      label={hostileUnits[index] ? hostileUnits[index].name.normal : "name"}
+                      label={defenderUnits[index] ? defenderUnits[index].name.normal : "name"}
                       InputProps={{
                         readOnly: true,
                       }}
                       defaultValue={
-                        hostileUnitCounts.find((item) =>
-                          hostileUnits[index]?.type === item.unitType
+                        defenderUnitCounts.find((item) =>
+                          defenderUnits[index]?.type === item.unitType
                         )?.unitCount
                       }
-                      value={hostileUnitCounts.find((item) =>
-                        hostileUnits[index]?.type === item.unitType
+                      value={defenderUnitCounts.find((item) =>
+                        defenderUnits[index]?.type === item.unitType
                       )?.unitCount
                   }
                   />
                   <Stack direction="row" spacing={1}>
                     <Button variant="contained" size="small" onClick={() => {
-                      setHostileUnitCounts(decreaseUnitCountByIndex(index, hostileUnitCounts, hostileUnits) || hostileUnitCounts)
+                      setDefenderUnitCounts(decreaseUnitCountByIndex(index, defenderUnitCounts, defenderUnits) || defenderUnitCounts)
                     }}>-</Button>
                     <Button variant="contained" size="small" onClick={() => {
-                      setHostileUnitCounts(increaseUnitCountByIndex(index, hostileUnitCounts, hostileUnits) || hostileUnitCounts)
+                      setDefenderUnitCounts(increaseUnitCountByIndex(index, defenderUnitCounts, defenderUnits) || defenderUnitCounts)
                     }}>+</Button>
                   </Stack>
                 </Stack>

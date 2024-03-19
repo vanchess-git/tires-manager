@@ -8,54 +8,54 @@ import {CombatResults} from "../data/interfaces/CombatResults";
 import {PlasticUnitPriority} from "../data/interfaces/PlasticUnitPriority";
 
 const handleFactionChange = (event: SelectChangeEvent): PlasticFaction | undefined => {
-  let newAllyFaction: PlasticFaction | undefined = plasticFactions.find((item) => event.target.value === item.id);
-  if (newAllyFaction !== undefined) {
-    return newAllyFaction;
+  let newFaction: PlasticFaction | undefined = plasticFactions.find((item) => event.target.value === item.id);
+  if (newFaction !== undefined) {
+    return newFaction;
   }
 };
 
 const increaseUnitCount = (currentUnit: PlasticUnit, index: number, unitCounts: PlasticUnitCount[]): PlasticUnitCount[] | undefined => {
-  const nextAllyCount: PlasticUnitCount[] = unitCounts.map((c, i) => {
+  const nextUnitCount: PlasticUnitCount[] = unitCounts.map((c, i) => {
     if (c.unitType === currentUnit.type) {
       return {unitType: c.unitType, unitCount: c.unitCount + 1};
     } else {
       return {unitType: c.unitType, unitCount: c.unitCount};
     }
   });
-  return nextAllyCount;
+  return nextUnitCount;
 }
 
 const decreaseUnitCount = (currentUnit: PlasticUnit, index: number, unitCounts: PlasticUnitCount[]): PlasticUnitCount[] | undefined => {
-  const nextAllyCount: PlasticUnitCount[] = unitCounts.map((c, i) => {
+  const nextUnitCount: PlasticUnitCount[] = unitCounts.map((c, i) => {
     if (c.unitType === currentUnit.type) {
       return {unitType: c.unitType, unitCount: c.unitCount - 1};
     } else {
       return {unitType: c.unitType, unitCount: c.unitCount};
     }
   });
-  return nextAllyCount;
+  return nextUnitCount;
 }
 
 const increaseUnitCountByIndex = (index: number, unitCounts: PlasticUnitCount[], PlasticUnits: PlasticUnit[]): PlasticUnitCount[] | undefined => {
-  const nextHostileCount: PlasticUnitCount[] = unitCounts.map((c, i) => {
+  const nextUnitCount: PlasticUnitCount[] = unitCounts.map((c, i) => {
     if (c.unitType === PlasticUnits[index].type) {
       return {unitType: c.unitType, unitCount: c.unitCount + 1};
     } else {
       return {unitType: c.unitType, unitCount: c.unitCount};
     }
   });
-  return nextHostileCount;
+  return nextUnitCount;
 }
 
 const decreaseUnitCountByIndex = (index: number, unitCounts: PlasticUnitCount[], PlasticUnits: PlasticUnit[]): PlasticUnitCount[] | undefined => {
-  const nextHostileCount: PlasticUnitCount[] = unitCounts.map((c, i) => {
+  const nextUnitCount: PlasticUnitCount[] = unitCounts.map((c, i) => {
     if (c.unitType === PlasticUnits[index].type) {
       return {unitType: c.unitType, unitCount: c.unitCount - 1};
     } else {
       return {unitType: c.unitType, unitCount: c.unitCount};
     }
   });
-  return nextHostileCount;
+  return nextUnitCount;
 }
 
 const plasticUnitsArrById = (id: string): PlasticUnit[] | undefined => {
@@ -67,36 +67,36 @@ const plasticUnitsArrById = (id: string): PlasticUnit[] | undefined => {
 }
 
 const calculateBattle = (
-    alliedFaction: PlasticFaction,
-    hostileFaction: PlasticFaction,
-    alliedUnits: PlasticUnit[],
-    hostileUnits: PlasticUnit[],
-    alliedUnitCounts: PlasticUnitCount[],
-    hostileUnitCounts: PlasticUnitCount[],
-    alliedUnitPriorities: PlasticUnitPriority[],
-    hostileUnitPriorities: PlasticUnitPriority[],
+    attackerFaction: PlasticFaction,
+    defenderFaction: PlasticFaction,
+    attackerUnits: PlasticUnit[],
+    defenderUnits: PlasticUnit[],
+    attackerUnitCounts: PlasticUnitCount[],
+    defenderUnitCounts: PlasticUnitCount[],
+    attackerUnitPriorities: PlasticUnitPriority[],
+    defenderUnitPriorities: PlasticUnitPriority[],
 ): CombatResults => {
   let combatResults: CombatResults = {
     resultType: "draw",
     factions: {
-      allied: alliedFaction.name,
-      hostile: hostileFaction.name,
+      attacker: attackerFaction.name,
+      defender: defenderFaction.name,
     },
     unitCounts: {
-      allied: alliedUnitCounts,
-      hostile: hostileUnitCounts,
+      attacker: attackerUnitCounts,
+      defender: defenderUnitCounts,
     }
   }
   // TODO figure out who are in combat
-  let alliesLeft: PlasticUnitCount[] = alliedUnitCounts;
-  let hostilesLeft: PlasticUnitCount[] = hostileUnitCounts;
+  let alliesLeft: PlasticUnitCount[] = attackerUnitCounts;
+  let hostilesLeft: PlasticUnitCount[] = defenderUnitCounts;
   // TODO figure out type of combat: space or ground
 
   // TODO roll for combat
-  let allyHits: number = rollCombatDice(alliedFaction, alliedUnits, alliesLeft)
-  let hostileHits: number = rollCombatDice(hostileFaction, hostileUnits, hostilesLeft)
-  alliesLeft = assignHits(hostileHits, alliesLeft, alliedUnits, alliedUnitPriorities)
-  hostilesLeft = assignHits(allyHits, hostilesLeft, hostileUnits, hostileUnitPriorities)
+  let allyHits: number = rollCombatDice(attackerFaction, attackerUnits, alliesLeft)
+  let hostileHits: number = rollCombatDice(defenderFaction, defenderUnits, hostilesLeft)
+  alliesLeft = assignHits(hostileHits, alliesLeft, attackerUnits, attackerUnitPriorities)
+  hostilesLeft = assignHits(allyHits, hostilesLeft, defenderUnits, defenderUnitPriorities)
   // TODO return the results
   return combatResults;
 }
