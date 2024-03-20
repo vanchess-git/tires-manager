@@ -19,7 +19,7 @@ import {plasticFactions} from "../../data/plasticFactions";
 import {PlasticUnitCount} from "../../data/interfaces/PlasticUnitCount";
 import {PlasticUnitPriority} from "../../data/interfaces/PlasticUnitPriority";
 import {
-  calculateBattle,
+  calculateBattle, calculateMultipleBattles,
   decreaseUnitCount,
   decreaseUnitCountByIndex,
   handleFactionChange,
@@ -44,13 +44,20 @@ function BattleCalculator() {
   let [attackerUnitPriorities, setAttackerUnitPriorities] = useState<PlasticUnitPriority[]>(defaultUnitPriorities)
   let [defenderUnitPriorities, setDefenderUnitPriorities] = useState<PlasticUnitPriority[]>(defaultUnitPriorities)
 
-  useEffect(() => {setAttackerUnits(plasticUnitsArrById(attackerFaction.id) || attackerUnits);}, [attackerFaction])
-  useEffect(() => {setDefenderUnits(plasticUnitsArrById(defenderFaction.id) || defenderUnits);}, [defenderFaction])
+  useEffect(() => {
+    setAttackerUnits(plasticUnitsArrById(attackerFaction.id) || attackerUnits);
+    setResolveCombat(!resolveCombat);
+    }, [attackerFaction])
+  useEffect(() => {
+    setDefenderUnits(plasticUnitsArrById(defenderFaction.id) || defenderUnits);
+    setResolveCombat(!resolveCombat);
+    }, [defenderFaction])
   useEffect(() => {
     //TODO Create:
     // TODO -- an interface for combat results == 1st version ready!
     // TODO -- a function for calculating combat results == started
-    let combatResults: CombatResults = calculateBattle(
+    let arrOfCombatResults: CombatResults[] = calculateMultipleBattles(
+      100,
       attackerFaction,
       defenderFaction,
       attackerUnits,
@@ -60,6 +67,7 @@ function BattleCalculator() {
       attackerUnitPriorities,
       defenderUnitPriorities,
     );
+    console.log(arrOfCombatResults)
     // TODO -- call the function here and store the results to a state
     // TODO -- use a boolean in a state flip whenever a combat is supposed to be calculated
   }, [resolveCombat]);
@@ -123,9 +131,11 @@ function BattleCalculator() {
                   <Stack direction="row" spacing={1}>
                     <Button variant="contained" size="small" onClick={() => {
                       setAttackerUnitCounts(decreaseUnitCount(allyUnit, index, attackerUnitCounts) || attackerUnitCounts)
+                      setResolveCombat(!resolveCombat)
                     }}>-</Button>
                     <Button variant="contained" size="small" onClick={() => {
                       setAttackerUnitCounts(increaseUnitCount(allyUnit, index, attackerUnitCounts) || attackerUnitCounts)
+                      setResolveCombat(!resolveCombat)
                     }}>+</Button>
                   </Stack>
                   <TextField
@@ -160,9 +170,11 @@ function BattleCalculator() {
                   <Stack direction="row" spacing={1}>
                     <Button variant="contained" size="small" onClick={() => {
                       setDefenderUnitCounts(decreaseUnitCountByIndex(index, defenderUnitCounts, defenderUnits) || defenderUnitCounts)
+                      setResolveCombat(!resolveCombat)
                     }}>-</Button>
                     <Button variant="contained" size="small" onClick={() => {
                       setDefenderUnitCounts(increaseUnitCountByIndex(index, defenderUnitCounts, defenderUnits) || defenderUnitCounts)
+                      setResolveCombat(!resolveCombat);
                     }}>+</Button>
                   </Stack>
                 </Stack>

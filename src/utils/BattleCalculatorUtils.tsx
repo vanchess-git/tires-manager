@@ -66,6 +66,34 @@ const plasticUnitsArrById = (id: string): PlasticUnit[] | undefined => {
   return plasticUnitsArr;
 }
 
+const calculateMultipleBattles = (
+    numberOfBattles: number,
+    attackerFaction: PlasticFaction,
+    defenderFaction: PlasticFaction,
+    attackerUnits: PlasticUnit[],
+    defenderUnits: PlasticUnit[],
+    attackerUnitCounts: PlasticUnitCount[],
+    defenderUnitCounts: PlasticUnitCount[],
+    attackerUnitPriorities: PlasticUnitPriority[],
+    defenderUnitPriorities: PlasticUnitPriority[],
+): CombatResults[] => {
+  let arrOfCombatResults: CombatResults[] = [];
+
+  for (let i: number = 0; i < numberOfBattles; i++) {
+    arrOfCombatResults.push(calculateBattle(
+        attackerFaction,
+        defenderFaction,
+        attackerUnits,
+        defenderUnits,
+        attackerUnitCounts,
+        defenderUnitCounts,
+        attackerUnitPriorities,
+        defenderUnitPriorities,
+    ))
+  }
+  return arrOfCombatResults;
+}
+
 const calculateBattle = (
     attackerFaction: PlasticFaction,
     defenderFaction: PlasticFaction,
@@ -224,5 +252,6 @@ export {
   increaseUnitCountByIndex,
   decreaseUnitCountByIndex,
   plasticUnitsArrById,
+    calculateMultipleBattles,
   calculateBattle,
 }
