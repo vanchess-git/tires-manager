@@ -31,6 +31,8 @@ import {defaultFaction} from "../../data/defaultValues/defaultFaction";
 import {defaultUnitCounts} from "../../data/defaultValues/defaultUnitCounts";
 import {defaultUnitPriorities} from "../../data/defaultValues/defaultUnitPriorities";
 import {CombatResults} from "../../data/interfaces/CombatResults";
+import {SimpleCombatPercentages} from "../../data/interfaces/SimpleCombatPercentages";
+import {defaultCombatPercentages} from "../../data/defaultValues/defaultCombatPercentages";
 
 function BattleCalculator() {
 
@@ -43,7 +45,7 @@ function BattleCalculator() {
   let [defenderUnitCounts, setDefenderUnitCounts] = useState<PlasticUnitCount[]>(defaultUnitCounts)
   let [attackerUnitPriorities, setAttackerUnitPriorities] = useState<PlasticUnitPriority[]>(defaultUnitPriorities)
   let [defenderUnitPriorities, setDefenderUnitPriorities] = useState<PlasticUnitPriority[]>(defaultUnitPriorities)
-
+  let [graphData, setGraphData] = useState<SimpleCombatPercentages>(defaultCombatPercentages);
   useEffect(() => {
     setAttackerUnits(plasticUnitsArrById(attackerFaction.id) || attackerUnits);
     setResolveCombat(!resolveCombat);
@@ -56,7 +58,7 @@ function BattleCalculator() {
     //TODO Create:
     // TODO -- an interface for combat results == 1st version ready!
     // TODO -- a function for calculating combat results == started
-    let arrOfCombatResults: CombatResults[] = calculateMultipleBattles(
+    let combatPercentages: SimpleCombatPercentages = calculateMultipleBattles(
       100,
       attackerFaction,
       defenderFaction,
@@ -67,7 +69,7 @@ function BattleCalculator() {
       attackerUnitPriorities,
       defenderUnitPriorities,
     );
-    console.log(arrOfCombatResults)
+    setGraphData(combatPercentages)
     // TODO -- call the function here and store the results to a state
     // TODO -- use a boolean in a state flip whenever a combat is supposed to be calculated
   }, [resolveCombat]);
@@ -78,8 +80,8 @@ function BattleCalculator() {
         App is started
       </Typography>
       <BarChart
-        xAxis={[{ scaleType: 'band', data: ['Turn 1', 'Turn 2', 'Turn 3', 'Turn 4', 'Turn 5', ] }]}
-        series={[{ data: [20, 36, 48.8, 59.04, 67.23] }, { data: [20, 36, 48.8, 59.04, 67.23] }, ]}
+        xAxis={[{ scaleType: 'band', data: graphData.graphLables }]}
+        series={[{ data: graphData.graphValues }, ]}
         width={500}
         height={300}
       />

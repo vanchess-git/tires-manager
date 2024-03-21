@@ -6,6 +6,8 @@ import {PlasticUnitCount} from "../data/interfaces/PlasticUnitCount";
 import {plasticUnits} from "../data/plasticUnits";
 import {CombatResults} from "../data/interfaces/CombatResults";
 import {PlasticUnitPriority} from "../data/interfaces/PlasticUnitPriority";
+import {SimpleCombatPercentages} from "../data/interfaces/SimpleCombatPercentages";
+import {defaultCombatPercentages} from "../data/defaultValues/defaultCombatPercentages";
 
 const handleFactionChange = (event: SelectChangeEvent): PlasticFaction | undefined => {
   let newFaction: PlasticFaction | undefined = plasticFactions.find((item) => event.target.value === item.id);
@@ -76,9 +78,10 @@ const calculateMultipleBattles = (
     defenderUnitCounts: PlasticUnitCount[],
     attackerUnitPriorities: PlasticUnitPriority[],
     defenderUnitPriorities: PlasticUnitPriority[],
-): CombatResults[] => {
+): SimpleCombatPercentages => {
+  // return was CombatResults[]
   let arrOfCombatResults: CombatResults[] = [];
-
+  let winPercentages = defaultCombatPercentages;
   for (let i: number = 0; i < numberOfBattles; i++) {
     arrOfCombatResults.push(calculateBattle(
         attackerFaction,
@@ -91,7 +94,9 @@ const calculateMultipleBattles = (
         defenderUnitPriorities,
     ))
   }
-  return arrOfCombatResults;
+  winPercentages = percentagesByResultType(arrOfCombatResults);
+  console.log(winPercentages)
+  return winPercentages;
 }
 
 const calculateBattle = (
@@ -243,6 +248,20 @@ const checkCombatResults = (
       }
     }
   }
+}
+
+const percentagesByResultType = (
+    combatResultsArr: CombatResults[],
+): SimpleCombatPercentages => {
+  let returnValues: SimpleCombatPercentages = defaultCombatPercentages;
+  if (combatResultsArr.length > 0) {
+    let attackerWins: number = combatResultsArr.filter(result => result.resultType === "attacker_win").length / combatResultsArr.length * 100;
+    let draws: number = combatResultsArr.filter(result => result.resultType === "draw").length / combatResultsArr.length * 100;
+    let defenderWins: number = combatResultsArr.filter(result => result.resultType === "defender_win").length / combatResultsArr.length * 100;
+    returnValues.graphValues = [attackerWins, draws, defenderWins];
+    return returnValues;
+  }
+  return returnValues;
 }
 
 export {
