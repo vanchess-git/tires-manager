@@ -1,7 +1,7 @@
 import {PlasticUnitCount} from "./PlasticUnitCount";
 
 export interface CombatResults {
-    resultType: string;     // ally victory, hostile victory or draw
+    resultType: string;     // attacker_win, defender_win or draw
     factions: {
         attacker: string;
         defender: string;

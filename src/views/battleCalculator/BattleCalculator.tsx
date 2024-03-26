@@ -59,7 +59,7 @@ function BattleCalculator() {
     // TODO -- an interface for combat results == 1st version ready!
     // TODO -- a function for calculating combat results == started
     let combatPercentages: SimpleCombatPercentages = calculateMultipleBattles(
-      100,
+      10000,
       attackerFaction,
       defenderFaction,
       attackerUnits,
@@ -133,11 +133,9 @@ function BattleCalculator() {
                   <Stack direction="row" spacing={1}>
                     <Button variant="contained" size="small" onClick={() => {
                       setAttackerUnitCounts(decreaseUnitCount(allyUnit, index, attackerUnitCounts) || attackerUnitCounts)
-                      setResolveCombat(!resolveCombat)
                     }}>-</Button>
                     <Button variant="contained" size="small" onClick={() => {
                       setAttackerUnitCounts(increaseUnitCount(allyUnit, index, attackerUnitCounts) || attackerUnitCounts)
-                      setResolveCombat(!resolveCombat)
                     }}>+</Button>
                   </Stack>
                   <TextField
@@ -172,11 +170,9 @@ function BattleCalculator() {
                   <Stack direction="row" spacing={1}>
                     <Button variant="contained" size="small" onClick={() => {
                       setDefenderUnitCounts(decreaseUnitCountByIndex(index, defenderUnitCounts, defenderUnits) || defenderUnitCounts)
-                      setResolveCombat(!resolveCombat)
                     }}>-</Button>
                     <Button variant="contained" size="small" onClick={() => {
                       setDefenderUnitCounts(increaseUnitCountByIndex(index, defenderUnitCounts, defenderUnits) || defenderUnitCounts)
-                      setResolveCombat(!resolveCombat);
                     }}>+</Button>
                   </Stack>
                 </Stack>

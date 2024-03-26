@@ -271,6 +271,7 @@ export {
   increaseUnitCountByIndex,
   decreaseUnitCountByIndex,
   plasticUnitsArrById,
-    calculateMultipleBattles,
+  calculateMultipleBattles,
   calculateBattle,
+  percentagesByResultType,
 }
