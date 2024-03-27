@@ -46,14 +46,7 @@ function BattleCalculator() {
   let [attackerUnitPriorities, setAttackerUnitPriorities] = useState<PlasticUnitPriority[]>(defaultUnitPriorities)
   let [defenderUnitPriorities, setDefenderUnitPriorities] = useState<PlasticUnitPriority[]>(defaultUnitPriorities)
   let [graphData, setGraphData] = useState<SimpleCombatPercentages>(defaultCombatPercentages);
-  useEffect(() => {
-    setAttackerUnits(plasticUnitsArrById(attackerFaction.id) || attackerUnits);
-    setResolveCombat(!resolveCombat);
-    }, [attackerFaction])
-  useEffect(() => {
-    setDefenderUnits(plasticUnitsArrById(defenderFaction.id) || defenderUnits);
-    setResolveCombat(!resolveCombat);
-    }, [defenderFaction])
+
   useEffect(() => {
     //TODO Create:
     // TODO -- an interface for combat results == 1st version ready!
@@ -72,7 +65,21 @@ function BattleCalculator() {
     setGraphData(combatPercentages)
     // TODO -- call the function here and store the results to a state
     // TODO -- use a boolean in a state flip whenever a combat is supposed to be calculated
-  }, [resolveCombat]);
+  }, [resolveCombat, attackerFaction, defenderFaction, attackerUnits, defenderUnits, attackerUnitCounts, defenderUnitCounts, attackerUnitPriorities, defenderUnitPriorities]);
+
+  useEffect(() => {
+    setAttackerUnits(plasticUnitsArrById(attackerFaction.id) || attackerUnits);
+    setResolveCombat(!resolveCombat);
+    }, [attackerFaction])
+
+  useEffect(() => {
+    setDefenderUnits(plasticUnitsArrById(defenderFaction.id) || defenderUnits);
+    setResolveCombat(!resolveCombat);
+    }, [defenderFaction])
+
+  useEffect(() => {
+    setResolveCombat(!resolveCombat)
+  }, [attackerUnitCounts, defenderUnitCounts]);
 
   return (
     <Container>
